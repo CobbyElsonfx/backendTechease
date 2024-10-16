@@ -88,7 +88,6 @@ doc.fontSize(13).font('Helvetica')
   .text('We\'d love for you to spread the word about Techease Africa and invite friends to enroll.')
   .moveDown(1)
   .font('Helvetica')
-  .fontStyle('italic')
   .text('Welcome to Techease Africa!', { align: 'left' })
   .moveDown(1);
 
