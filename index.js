@@ -111,7 +111,7 @@ function sendEmailWithAttachment(firstName, pdfPath, email, res) {
     from: 'techeaseafrica@gmail.com',
     to: email,
     subject: `Welcome to Techease Africa, ${firstName}!`,
-    text: `Dear ${firstName},\n\nWe are excited to have you join Techease Africa. Please find attached your welcome letter.\n\nBest regards,\nTechease Africa Team`,
+    text: `Dear ${firstName},\n\nWe are excited to have you join Techease Africa. Please find attached your admission letter.\n\nBest regards,\nTechease Africa Team`,
     attachments: [
       {
         filename: `${firstName}_congrats.pdf`,
