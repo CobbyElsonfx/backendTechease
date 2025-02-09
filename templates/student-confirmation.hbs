@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; margin-bottom: 30px; }
+    .content { margin-bottom: 30px; }
+    .footer { text-align: center; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Welcome to TechEase Africa!</h1>
+    </div>
+    <div class="content">
+      <p>Dear {{name}},</p>
+      <p>Thank you for applying to our {{courseName}} program. We're excited to have you join us!</p>
+      <p>Your application has been received and is being processed. Here are your application details:</p>
+      <ul>
+        <li>Course: {{courseName}}</li>
+        <li>Schedule: {{courseSchedule}}</li>
+        <li>Duration: {{courseDuration}}</li>
+      </ul>
+      <p>We will contact you shortly with further instructions.</p>
+    </div>
+    <div class="footer">
+      <p>Best regards,<br>TechEase Africa Team</p>
+    </div>
+  </div>
+</body>
+</html>
