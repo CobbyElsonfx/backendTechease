@@ -13,6 +13,7 @@ const applicationRoutes = require('./routes/application');
 
 const app = express();
 
+
 // Middleware
 app.use(bodyParser.json());
 
@@ -26,6 +27,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions)); 
+
 
 // Routes
 app.use('/api/admin', adminRoutes);
