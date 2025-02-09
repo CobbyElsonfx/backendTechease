@@ -13,3 +13,4 @@ router.put('/:id', authenticateToken, courseController.updateCourse);
 router.delete('/:id', authenticateToken, courseController.deleteCourse);
 
 module.exports = router;
+
