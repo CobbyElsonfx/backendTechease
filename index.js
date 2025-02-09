@@ -24,6 +24,22 @@ connectDB().then(async () => {
 });
 
 
+// Middleware
+app.use(bodyParser.json());
+
+
+// Configure CORS for production
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://yourdomain.com']  // Your frontend domain(s)
+    : 'http://localhost:3000', // Development frontend URL
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions)); 
+
+
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/courses', courseRoutes);
