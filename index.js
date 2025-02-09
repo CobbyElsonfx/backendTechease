@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 // Import routes
 const adminRoutes = require('./routes/admin');
@@ -12,26 +13,14 @@ const applicationRoutes = require('./routes/application');
 
 const app = express();
 
-// Connect to database
-connectDB().then(async () => {
-  try {
-    const Setting = require('./models/Setting');
-    await Setting.initializeDefaultSettings();
-    console.log('Default settings initialized');
-  } catch (error) {
-    console.error('Error initializing settings:', error);
-  }
-});
-
 
 // Middleware
 app.use(bodyParser.json());
 
-
 // Configure CORS for production
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com']  // Your frontend domain(s)
+    ? ['https://techeaseafrica.onrender.com']  // Your frontend domain
     : 'http://localhost:3000', // Development frontend URL
   credentials: true,
   optionsSuccessStatus: 200
@@ -47,17 +36,27 @@ app.use('/api/settings', settingRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/application', applicationRoutes);
 
-// Initialize admin account
-const initializeAdmin = require('./utils/initAdmin');
-(async () => {
-  try {
-    await initializeAdmin();
-  } catch (error) {
-    console.error('Failed to initialize admin:', error);
-  }
-})();
-
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    // Initialize settings and admin after DB connection
+    const Setting = require('./models/Setting');
+    Setting.initializeDefaultSettings()
+      .then(() => console.log('Default settings initialized'))
+      .catch(error => console.error('Error initializing settings:', error));
+    
+    const initializeAdmin = require('./utils/initAdmin');
+    initializeAdmin()
+      .then(() => console.log('Admin initialized'))
+      .catch(error => console.error('Failed to initialize admin:', error));
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });

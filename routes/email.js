@@ -15,7 +15,7 @@ router.post('/send-email', async (req, res) => {
 
     await sendEmail({
       to,
-      subject: `Welcome to TechEase Africa, ${name}!`,
+      subject: `Welcome to Teachease Africa, ${name}!`,
       template: 'student-confirmation',
       data: {
         name,

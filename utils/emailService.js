@@ -33,7 +33,7 @@ async function sendAdminNotification({ to, subject, template, data }) {
     const html = compiledTemplate(data);
 
     const mailOptions = {
-      from: '"TechEase Africa" <noreply@techease.africa>',
+      from: '"Teachease Africa" <noreply@techease.africa>',
       to,
       subject,
       html
@@ -143,9 +143,9 @@ async function sendEmail({ to, firstName, selectedCourse }) {
     const pdfPath = await generatePDF({ firstName, selectedCourse });
 
     const mailOptions = {
-      from: '"TechEase Africa" <noreply@techease.africa>',
+      from: '"Teachease Africa" <noreply@techease.africa>',
       to,
-      subject: `Welcome to TechEase Africa, ${firstName}!`,
+      subject: `Welcome to Teachease Africa, ${firstName}!`,
       text: `Dear ${firstName},\n\nWe are excited to have you join Techease Africa. Please find attached your admission letter.\n\nBest regards,\nTechease Africa Team`,
       attachments: [
         {

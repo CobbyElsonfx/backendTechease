@@ -3,10 +3,22 @@ const Course = require('../models/Course');
 // Get all courses
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find().sort('order');
-    res.json(courses);
+    const courses = await Course.find();
+    
+    // Separate courses by type
+    const primaryCourses = courses.filter(course => course.type === 'primary');
+    const secondaryCourses = courses.filter(course => course.type === 'secondary');
+
+    res.json({
+      primaryCourses,
+      secondaryCourses
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching courses' });
+    console.error('Error fetching courses:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch courses',
+      details: error.message 
+    });
   }
 };
 
