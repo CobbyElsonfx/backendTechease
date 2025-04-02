@@ -40,12 +40,12 @@ const settingController = {
     try {
       const updatedSettings = await Setting.updateSettings(req.body);
       res.json(updatedSettings);
-    } catch (error) {
+  } catch (error) {
       res.status(400).json({ message: error.message });
     }
   },
 
-  // Get next cohort date
+// Get next cohort date
   getNextCohortDate: async (req, res) => {
     try {
       let settings = await Setting.findOne({});
@@ -53,7 +53,7 @@ const settingController = {
         settings = await Setting.create(defaultSettings);
       }
       res.json({ nextCohortDate: settings.nextCohortDate });
-    } catch (error) {
+  } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }

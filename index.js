@@ -32,7 +32,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/email', emailRoutes);
-app.use('/api/application', applicationRoutes);
+app.use('/api/applications', applicationRoutes);
 
 const PORT = process.env.PORT || 5000;
 
