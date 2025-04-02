@@ -13,6 +13,5 @@ router.use(authenticateToken);
 router.get('/', settingController.getAllSettings);
 router.post('/', settingController.updateSetting);
 router.get('/next-cohort', settingController.getNextCohortDate);
-router.post('/initialize', settingController.initializeSettings);
 
 module.exports = router;

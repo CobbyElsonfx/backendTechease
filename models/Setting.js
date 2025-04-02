@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const SettingSchema = new mongoose.Schema({
   nextCohortDate: {
     type: Date,
-    required: true
+    required: true,
+    get: function(date) {
+      return date ? date.toISOString().split('T')[0] : null;
+    }
   },
   courseDuration: {
     type: String,
@@ -15,71 +18,39 @@ const SettingSchema = new mongoose.Schema({
   },
   applicationDeadline: {
     type: Date,
+    required: true,
+    get: function(date) {
+      return date ? date.toISOString().split('T')[0] : null;
+    }
   },
   maxStudentsPerCohort: {
     type: Number,
+    required: true,
+    default: 100
   }
 }, {
-  timestamps: true  // Adds createdAt and updatedAt fields
+  timestamps: true,
+  toJSON: { getters: true },
+  toObject: { getters: true }
 });
 
-// Pre-save middleware to validate date settings
-SettingSchema.pre('save', function (next) {
-  if (this.key === 'nextCohortDate') {
-    // Ensure the value is a valid date
-    const date = new Date(this.value);
-    if (isNaN(date.getTime())) {
-      next(new Error('Invalid date format for nextCohortDate'));
-      return;
+// Simple method to update settings
+SettingSchema.statics.updateSettings = async function(newSettings) {
+  try {
+    const settings = await this.findOne({});
+    if (!settings) {
+      return await this.create(newSettings);
     }
-    this.value = date;
-  }
-  this.lastModified = new Date();
-  next();
-});
-
-// Static method to get next cohort date
-SettingSchema.statics.getNextCohortDate = async function () {
-  const setting = await this.findOne({ key: 'nextCohortDate' });
-  return setting ? new Date(setting.value) : null;
-};
-
-// Static method to initialize default settings
-SettingSchema.statics.initializeDefaultSettings = async function () {
-  const defaults = [
-    {
-      key: 'nextCohortDate',
-      value: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 3 months from now
-      description: 'Next cohort start date'
-    },
-    {
-      key: 'courseDuration',
-      value: '8 weeks',
-      description: 'Duration of the course'
-    },
-    {
-      key: 'sessionFrequency',
-      value: 'twice per week',
-      description: 'Frequency of sessions'
-    },
-    {
-      key: 'applicationDeadline',
-      value: new Date(new Date().setDate(new Date().getDate() + 14)), // Default to 2 weeks from now
-      description: 'Deadline for submitting applications'
-    },
-    {
-      key: 'maxStudentsPerCohort',
-      value: 100,
-      description: 'Maximum number of students allowed per cohort'
-    }
-  ];
-
-  for (const setting of defaults) {
-    await this.findOneAndUpdate(
-      { key: setting.key },
-      setting,
-      { upsert: true, new: true }
-    );
+    
+    Object.keys(newSettings).forEach(key => {
+      if (newSettings[key] !== undefined) {
+        settings[key] = newSettings[key];
+      }
+    });
+    
+    return await settings.save();
+  } catch (error) {
+    throw new Error(`Error updating settings: ${error.message}`);
   }
 };
 

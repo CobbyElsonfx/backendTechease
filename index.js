@@ -34,27 +34,19 @@ app.use('/api/settings', settingRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/application', applicationRoutes);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    // Initialize settings and admin after DB connection
-    const Setting = require('./models/Setting');
-    Setting.initializeDefaultSettings()
-      .then(() => console.log('Default settings initialized'))
-      .catch(error => console.error('Error initializing settings:', error));
-    
-    const initializeAdmin = require('./utils/initAdmin');
-    initializeAdmin()
-      .then(() => console.log('Admin initialized'))
-      .catch(error => console.error('Failed to initialize admin:', error));
-
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    // Initialize admin account
+    require('./utils/initAdmin')();
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error);
   });
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
