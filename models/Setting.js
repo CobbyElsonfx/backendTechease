@@ -1,29 +1,30 @@
 const mongoose = require('mongoose');
 
-const settingSchema = new mongoose.Schema({
-  key: {
-    type: String,
-    required: true,
-    unique: true,
-    enum: ['nextCohortDate', 'applicationDeadline', 'maxStudentsPerCohort', 'courseDuration', 'sessionFrequency']
-  },
-  value: {
-    type: mongoose.Schema.Types.Mixed,
+const SettingSchema = new mongoose.Schema({
+  nextCohortDate: {
+    type: Date,
     required: true
   },
-  description: {
-    type: String
+  courseDuration: {
+    type: String,
+    required: true
   },
-  lastModified: {
+  sessionFrequency: {
+    type: String,
+    required: true
+  },
+  applicationDeadline: {
     type: Date,
-    default: Date.now
+  },
+  maxStudentsPerCohort: {
+    type: Number,
   }
 }, {
-  timestamps: true
+  timestamps: true  // Adds createdAt and updatedAt fields
 });
 
 // Pre-save middleware to validate date settings
-settingSchema.pre('save', function(next) {
+SettingSchema.pre('save', function (next) {
   if (this.key === 'nextCohortDate') {
     // Ensure the value is a valid date
     const date = new Date(this.value);
@@ -38,17 +39,17 @@ settingSchema.pre('save', function(next) {
 });
 
 // Static method to get next cohort date
-settingSchema.statics.getNextCohortDate = async function() {
+SettingSchema.statics.getNextCohortDate = async function () {
   const setting = await this.findOne({ key: 'nextCohortDate' });
   return setting ? new Date(setting.value) : null;
 };
 
 // Static method to initialize default settings
-settingSchema.statics.initializeDefaultSettings = async function() {
+SettingSchema.statics.initializeDefaultSettings = async function () {
   const defaults = [
     {
       key: 'nextCohortDate',
-      value: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
+      value: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 3 months from now
       description: 'Next cohort start date'
     },
     {
@@ -68,7 +69,7 @@ settingSchema.statics.initializeDefaultSettings = async function() {
     },
     {
       key: 'maxStudentsPerCohort',
-      value: 50,
+      value: 100,
       description: 'Maximum number of students allowed per cohort'
     }
   ];
@@ -82,6 +83,4 @@ settingSchema.statics.initializeDefaultSettings = async function() {
   }
 };
 
-const Setting = mongoose.model('Setting', settingSchema);
-
-module.exports = Setting; 
+module.exports = mongoose.model('Setting', SettingSchema); 

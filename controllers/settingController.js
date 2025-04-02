@@ -13,20 +13,32 @@ exports.getAllSettings = async (req, res) => {
 // Update or create setting
 exports.updateSetting = async (req, res) => {
   try {
-    const { key, value, description } = req.body;
-    
+    const { nextCohortDate, courseDuration, sessionFrequency, applicationDeadline } = req.body;
+    console.log("req.body", req.body);
+   
     // Validate date format for nextCohortDate
-    if (key === 'nextCohortDate') {
-      const date = new Date(value);
+    if (nextCohortDate) {
+      const date = new Date(nextCohortDate);
       if (isNaN(date.getTime())) {
-        return res.status(400).json({ message: 'Invalid date format' });
+        return res.status(400).json({ message: 'Invalid next cohort start date format. Please provide a valid date' });
       }
     }
 
+    // Find the existing setting or create a new one
     const setting = await Setting.findOneAndUpdate(
-      { key },
-      { key, value, description },
-      { upsert: true, new: true, runValidators: true }
+      {}, // Empty filter to find any document
+      {
+        nextCohortDate: nextCohortDate ? new Date(nextCohortDate) : undefined,
+        courseDuration,
+        sessionFrequency,
+        applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : undefined
+      },
+      { 
+        upsert: true, 
+        new: true, 
+        runValidators: true,
+        setDefaultsOnInsert: true 
+      }
     );
     
     res.json(setting);
@@ -34,6 +46,7 @@ exports.updateSetting = async (req, res) => {
     if (error.name === 'ValidationError') {
       res.status(400).json({ message: error.message });
     } else {
+      console.error('Error updating settings:', error);
       res.status(500).json({ message: 'Error updating setting' });
     }
   }
