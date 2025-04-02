@@ -3,18 +3,22 @@ const Admin = require('../models/Admin');
 
 const initializeAdmin = async () => {
   try {
-    const adminExists = await Admin.findOne({ email: 'admin@techease.africa' });
+    // Check if admin exists
+    const adminExists = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+    
     if (!adminExists) {
+      console.log('Creating default admin account...');
       const hashedPassword = await bcrypt.hash('admin123', 10);
-      const admin = new Admin({
-        email: 'admin@techease.africa',
+      
+      await Admin.create({
+        email: process.env.ADMIN_EMAIL,
         password: hashedPassword
       });
-      await admin.save();
-      console.log('Admin account created successfully');
+      
+      console.log('Default admin account created');
     }
   } catch (error) {
-    console.error('Error creating admin account:', error);
+    console.error('Error initializing admin:', error);
   }
 };
 

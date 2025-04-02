@@ -13,6 +13,8 @@ router.post('/submit', async (req, res) => {
       selectedCourse
     });
 
+
+    console.log("selectedCourse", selectedCourse)
     // Send simple notification to admin using Handlebars template
     await sendAdminNotification({
       to: process.env.ADMIN_EMAIL,
