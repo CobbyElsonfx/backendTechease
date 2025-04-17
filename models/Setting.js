@@ -27,6 +27,15 @@ const SettingSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 100
+  },
+  isApplicationPortalOpen: {
+    type: Boolean,
+    default: true,
+    required: true
+  },
+  portalClosedMessage: {
+    type: String,
+    default: "Applications are currently closed. Please check back later.",
   }
 }, {
   timestamps: true,
