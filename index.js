@@ -10,6 +10,7 @@ const courseRoutes = require('./routes/courses');
 const settingRoutes = require('./routes/settings');
 const emailRoutes = require('./routes/email');
 const applicationRoutes = require('./routes/application');
+const eventRoutes = require('./routes/events');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/events', eventRoutes);
 
 const PORT = process.env.PORT || 5000;
 
