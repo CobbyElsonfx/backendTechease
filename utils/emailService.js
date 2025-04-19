@@ -79,50 +79,44 @@ async function generatePDF(data) {
 
   doc.moveDown(4);
 
-  // Add content
-  doc.fontSize(13).font('Helvetica')
+  // Add content with reduced font size
+  doc.fontSize(11).font('Helvetica')
     .text(`Dear ${firstName},`, { align: 'left' })
     .moveDown(1)
     .font('Helvetica-Bold')
     .text('Congratulations on Your Acceptance!', { align: 'center', underline: true })
     .moveDown(1)
     .font('Helvetica')
-    .text(`We are thrilled to welcome you to the ${formattedStartDate} cohort of our (${selectedCourse}) at Techease Africa! Due to the high volume of applications, we carefully select only 50 students per cohort to ensure a personalized learning experience.`)
+    .text(`We are thrilled to welcome you to the ${formattedStartDate} cohort of the ${selectedCourse} program at Techease Africa. You are among a carefully selected group of 20 exceptional individuals chosen through a competitive admissions process. Prepare to embark on a focused, high-impact learning journey designed to equip you with the skills to lead and excel in todays digital world.`)
     .moveDown(2)
     .font('Helvetica-Bold')
     .text('Program Details:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
     .list([
-      `Classes begin: ${formattedStartDate}`,
+      `Start Date: ${formattedStartDate}`,
       `Duration: ${courseDuration}`,
-      `Sessions: ${sessionFrequency} via Google Meet/video conferencing tools`,
-      'Mandatory participation in all sessions',
-      'Final project submission in week 12',
+      `Schedule: ${sessionFrequency} sessions via Google Meet`,
+      'Final project submission in week 10',
       '4-week internship/mentorship on real-world projects',
     ])
     .moveDown(1)
     .font('Helvetica-Bold')
-    .text('Scholarship and Fees:', { align: 'left', underline: true })
-    .moveDown(0.5)
-    .font('Helvetica')
-    .text('This program is fully funded by Kayish Group of Companies. There are no school fees. However, a non-refundable monthly supportive fee of GHS 90 (or GHS 150 one-time payment) is required to sustain our operations.')
-    .moveDown(1)
-    .font('Helvetica-Bold')
-    .text('Next Steps:', { align: 'left', underline: true })
+    .text('Registration Requirements:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
     .list([
-      'Keep your WhatsApp active for confirmation and onboarding.',
-      'Your course mentor will contact you a week before the training.',
-      'Get ready for a transformative learning experience!',
+      'Non-refundable registration fee of GHS 150 (Payment must be completed before program start date)',
+      'Personal laptop with stable internet connection',
+      'Regular attendance is mandatory for all sessions',
+      'Curriculum available for review on our website',
     ])
     .moveDown(1)
     .font('Helvetica-Bold')
-    .text('Share Your Excitement!', { align: 'left', underline: true })
+    .text('Important Notes:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
-    .text('We\'d love for you to spread the word about Techease Africa and invite friends to enroll.')
+    .text('Failure to complete payment by the start date will result in forfeiting your spot. You will need to reapply for the next cohort. Attendance is strictly monitored and is a key factor in program completion and certification.')
     .moveDown(1)
     .font('Helvetica')
     .text('Welcome to Techease Africa!', { align: 'left' })
