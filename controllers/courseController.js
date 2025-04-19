@@ -84,38 +84,19 @@ exports.createCourse = async (req, res) => {
 exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
-
-    // Validate curriculum data if it's being updated
-    if (updates.curriculum) {
-      for (const item of updates.curriculum) {
-        if (!item.week || !item.topic) {
-          return res.status(400).json({ 
-            message: 'Each curriculum item must have a week number and topic' 
-          });
-        }
-      }
-    }
-
-    updates.updatedAt = new Date();
-    
     const course = await Course.findByIdAndUpdate(
       id,
-      updates,
+      req.body,
       { new: true, runValidators: true }
     );
     
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
-    
+
     res.json(course);
   } catch (error) {
-    console.error('Course update error:', error);
-    res.status(500).json({ 
-      message: 'Error updating course',
-      error: error.message 
-    });
+    res.status(400).json({ message: error.message });
   }
 };
 

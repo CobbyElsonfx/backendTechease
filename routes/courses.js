@@ -8,9 +8,10 @@ router.get('/', courseController.getAllCourses);
 router.get('/type/:type', courseController.getCoursesByType);
 
 // Protected routes
-router.post('/', authenticateToken, courseController.createCourse);
-router.put('/:id', authenticateToken, courseController.updateCourse);
-router.delete('/:id', authenticateToken, courseController.deleteCourse);
+router.use(authenticateToken);
+router.post('/', courseController.createCourse);
+router.put('/:id', courseController.updateCourse);
+router.delete('/:id', courseController.deleteCourse);
 
 module.exports = router;
 
