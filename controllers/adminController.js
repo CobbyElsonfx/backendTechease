@@ -60,6 +60,25 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.verifyToken = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user.id);
+    if (!admin) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    res.json({
+      user: {
+        id: admin._id,
+        email: admin.email
+      }
+    });
+  } catch (error) {
+    console.error('Token verification error:', error);
+    res.status(500).json({ message: 'Error verifying token' });
+  }
+};
+
 exports.getDashboardStats = async (req, res) => {
   try {
     const totalApplications = await Application.countDocuments();

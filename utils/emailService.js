@@ -4,6 +4,7 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
 const Setting = require('../models/Setting');
+const { scheduleJob } = require('node-schedule');
 
 // Create transporter
 const transporter = nodemailer.createTransport({
@@ -20,6 +21,48 @@ function formatDate(date) {
     month: 'long',
     day: 'numeric',
     year: 'numeric'
+  });
+}
+
+// Function to send initial application acknowledgment
+async function sendApplicationAcknowledgment({ to, firstName, selectedCourse }) {
+  try {
+    const mailOptions = {
+      from: '"Teachease Africa" <noreply@techease.africa>',
+      to,
+      subject: `Thank You for Applying to Techease Africa, ${firstName}!`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2c3e50;">Thank You for Your Application!</h2>
+          <p>Dear ${firstName},</p>
+          <p>Thank you for taking the first step in your tech career journey by applying to our ${selectedCourse} program at Techease Africa.</p>
+          <p>Our admissions board is currently reviewing your application. This process typically takes less than 30 minutes.</p>
+          <p>Please check your email in about 30 minutes for your admission decision and next steps.</p>
+          <p>Best regards,<br>Techease Africa Team</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    console.error('Application acknowledgment email failed:', error);
+    throw error;
+  }
+}
+
+// Function to schedule admission letter
+function scheduleAdmissionLetter({ to, firstName, selectedCourse }) {
+  // Schedule the email to be sent 30 minutes from now
+  const scheduledTime = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+  
+  scheduleJob(scheduledTime, async () => {
+    try {
+      await sendEmail({ to, firstName, selectedCourse });
+      console.log(`Scheduled admission letter sent to ${to}`);
+    } catch (error) {
+      console.error('Error sending scheduled admission letter:', error);
+    }
   });
 }
 
@@ -139,7 +182,7 @@ async function sendEmail({ to, firstName, selectedCourse }) {
     const mailOptions = {
       from: '"Teachease Africa" <noreply@techease.africa>',
       to,
-      subject: `Welcome to Teachease Africa, ${firstName}!`,
+      subject: `Welcome to Techease Africa, ${firstName}!`,
       text: `Dear ${firstName},\n\nWe are excited to have you join Techease Africa. Please find attached your admission letter.\n\nBest regards,\nTechease Africa Team`,
       attachments: [
         {
@@ -165,5 +208,7 @@ async function sendEmail({ to, firstName, selectedCourse }) {
 
 module.exports = { 
   sendEmail,
-  sendAdminNotification 
+  sendAdminNotification,
+  sendApplicationAcknowledgment,
+  scheduleAdmissionLetter
 }; 

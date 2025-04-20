@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendEmail, sendAdminNotification } = require('../utils/emailService');
+const { sendEmail, sendAdminNotification, sendApplicationAcknowledgment, scheduleAdmissionLetter } = require('../utils/emailService');
 const Application = require('../models/Application');
 const Setting = require('../models/Setting');
 
@@ -53,17 +53,30 @@ router.post('/submit', async (req, res) => {
       });
     }
 
-    // Send PDF confirmation to student
+    // Send initial acknowledgment email
     try {
-      await sendEmail({
+      await sendApplicationAcknowledgment({
         to: email,
         firstName,
         selectedCourse
       });
-      console.log('Confirmation email sent to student');
-    } catch (emailError) {
-      console.error('Email sending error:', emailError);
+      console.log('Initial acknowledgment email sent to student');
+    } catch (acknowledgmentError) {
+      console.error('Acknowledgment email error:', acknowledgmentError);
       // Don't fail the request if email fails
+    }
+
+    // Schedule admission letter to be sent in 30 minutes
+    try {
+      scheduleAdmissionLetter({
+        to: email,
+        firstName,
+        selectedCourse
+      });
+      console.log('Admission letter scheduled to be sent in 30 minutes');
+    } catch (schedulingError) {
+      console.error('Scheduling error:', schedulingError);
+      // Don't fail the request if scheduling fails
     }
 
     // Send notification to admin
@@ -88,7 +101,7 @@ router.post('/submit', async (req, res) => {
 
     res.status(200).json({ 
       status: 'success',
-      message: 'Application submitted successfully',
+      message: 'Application submitted successfully. Please check your email for next steps.',
       applicationId: application._id
     });
   } catch (error) {
