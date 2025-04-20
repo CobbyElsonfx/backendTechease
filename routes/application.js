@@ -102,7 +102,8 @@ router.post('/submit', async (req, res) => {
     res.status(200).json({ 
       status: 'success',
       message: 'Application submitted successfully. Please check your email for next steps.',
-      applicationId: application._id
+      applicationId: application._id,
+      redirectUrl: '/application-success'
     });
   } catch (error) {
     console.error('Application submission error:', error);

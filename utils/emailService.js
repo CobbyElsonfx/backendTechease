@@ -47,6 +47,24 @@ async function sendApplicationAcknowledgment({ to, firstName, selectedCourse }) 
           <p>Dear ${firstName},</p>
           <p>Thank you for taking the first step in your tech career journey by applying to our ${selectedCourse} program at Techease Africa.</p>
           <p>Our admissions board is currently reviewing your application. This process typically takes less than 30 minutes.</p>
+          <p>While you wait, we encourage you to join our community platforms to stay updated:</p>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 10px;">
+              <a href="https://chat.whatsapp.com/JJy13uPBrR775bWbxTWhRw" style="color: #25D366; text-decoration: none;">
+                <strong>📱 WhatsApp Group</strong> - Join our community chat
+              </a>
+            </li>
+            <li style="margin-bottom: 10px;">
+              <a href="https://whatsapp.com/channel/0029VavCltyF6smt3meu7k3M" style="color: #25D366; text-decoration: none;">
+                <strong>📢 WhatsApp Channel</strong> - Get official updates
+              </a>
+            </li>
+            <li style="margin-bottom: 10px;">
+              <a href="https://chat.google.com/room/AAQAjAEjuNQ?cls=7" style="color: #4285F4; text-decoration: none;">
+                <strong>💬 Google Chat Space</strong> - Connect with mentors
+              </a>
+            </li>
+          </ul>
           <p>Please check your email in about 30 minutes for your admission decision and next steps.</p>
           <p>Best regards,<br>Techease Africa Team</p>
         </div>
@@ -167,6 +185,17 @@ async function generatePDF(data) {
     ])
     .moveDown(1)
     .font('Helvetica-Bold')
+    .text('Next Steps:', { align: 'left', underline: true })
+    .moveDown(0.5)
+    .font('Helvetica')
+    .list([
+      'Complete your registration fee payment',
+      'Review the curriculum on our website',
+      'Prepare your learning environment (laptop and stable internet)',
+      'Mark your calendar for the program start date',
+    ])
+    .moveDown(1)
+    .font('Helvetica-Bold')
     .text('Important Notes:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
@@ -188,16 +217,24 @@ async function generatePDF(data) {
 
 async function sendEmail({ to, firstName, selectedCourse }) {
   try {
-    const pdfPath = await generatePDF({ firstName, selectedCourse });
+    if (!firstName) {
+      console.error('Missing firstName in email data');
+      throw new Error('Missing firstName in email data');
+    }
+
+    const pdfPath = await generatePDF({ 
+      firstName: firstName.trim(), 
+      selectedCourse: selectedCourse.trim() 
+    });
 
     const mailOptions = {
       from: '"Teachease Africa" <noreply@techease.africa>',
       to,
-      subject: `Welcome to Techease Africa, ${firstName}!`,
-      text: `Dear ${firstName},\n\nWe are excited to have you join Techease Africa. Please find attached your admission letter.\n\nBest regards,\nTechease Africa Team`,
+      subject: `Welcome to Techease Africa, ${firstName.trim()}!`,
+      text: `Dear ${firstName.trim()},\n\nWe are excited to have you join Techease Africa. Please find attached your admission letter.\n\nBest regards,\nTechease Africa Team`,
       attachments: [
         {
-          filename: `${firstName}_congrats.pdf`,
+          filename: `${firstName.trim()}_congrats.pdf`,
           path: pdfPath,
         }
       ]
