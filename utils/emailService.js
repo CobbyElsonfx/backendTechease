@@ -17,11 +17,21 @@ const transporter = nodemailer.createTransport({
 
 // Function to get formatted date
 function formatDate(date) {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  });
+  if (!date) return 'To be announced';
+  try {
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return 'To be announced';
+    }
+    return dateObj.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'To be announced';
+  }
 }
 
 // Function to send initial application acknowledgment
@@ -95,13 +105,14 @@ async function generatePDF(data) {
   const { firstName, selectedCourse } = data;
   
   // Get settings
-  const settings = await Setting.find({
-    key: { $in: ['nextCohortDate', 'courseDuration', 'sessionFrequency'] }
-  });
-  
-  const nextCohortDate = settings.find(s => s.key === 'nextCohortDate')?.value;
-  const courseDuration = settings.find(s => s.key === 'courseDuration')?.value || '12 weeks';
-  const sessionFrequency = settings.find(s => s.key === 'sessionFrequency')?.value || 'twice per week';
+  const settings = await Setting.findOne({});
+  if (!settings) {
+    throw new Error('Settings not found');
+  }
+
+  const nextCohortDate = settings.nextCohortDate;
+  const courseDuration = settings.courseDuration || '12 weeks';
+  const sessionFrequency = settings.sessionFrequency || 'twice per week';
 
   const formattedStartDate = formatDate(nextCohortDate);
 
@@ -120,7 +131,7 @@ async function generatePDF(data) {
   const letterheadPath = path.join(__dirname, '../assets/letterhead.jpg');
   doc.image(letterheadPath, 0, 0, { width: doc.page.width, height: doc.page.height });
 
-  doc.moveDown(4);
+  doc.moveDown(7);
 
   // Add content with reduced font size
   doc.fontSize(11).font('Helvetica')
