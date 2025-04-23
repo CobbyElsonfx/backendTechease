@@ -20,13 +20,13 @@ app.use(bodyParser.json());
 // Configure CORS for production
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://techeaseafrica.onrender.com']  // Your frontend domain
+    ? ['https://techeaseafrica.onrender.com']  
     : 'http://localhost:3000', // Development frontend URL
   credentials: true,
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 
 // Routes
 app.use('/api/admin', adminRoutes);
@@ -46,7 +46,7 @@ mongoose.connect(process.env.MONGODB_URI)
     require('./utils/initAdmin')();
   })
   .catch((error) => {
-    console.error('MongoDB connection error:', error);
+    console.error('MongoDB connection :', error);
   });
 
 app.listen(PORT, () => {
