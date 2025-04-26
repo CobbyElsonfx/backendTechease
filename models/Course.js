@@ -25,7 +25,7 @@ const courseSchema = new mongoose.Schema({
   duration: {
     type: String,
     default: '12 Weeks'
-  },
+  },  
   schedule: {
     type: String,
     default: 'Weekends Only'

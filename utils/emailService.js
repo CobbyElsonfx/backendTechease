@@ -84,14 +84,34 @@ function scheduleAdmissionLetter({ to, firstName, selectedCourse }) {
   // Schedule the email to be sent 30 minutes from now
   const scheduledTime = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
   
-  scheduleJob(scheduledTime, async () => {
+  // Store the job in a persistent way
+  const job = scheduleJob(scheduledTime, async () => {
     try {
+      console.log(`Attempting to send admission letter to ${to} at ${new Date()}`);
       await sendEmail({ to, firstName, selectedCourse });
-      console.log(`Scheduled admission letter sent to ${to}`);
+      console.log(`Successfully sent admission letter to ${to}`);
     } catch (error) {
       console.error('Error sending scheduled admission letter:', error);
+      // If email fails, try again after 5 minutes
+      setTimeout(async () => {
+        try {
+          console.log(`Retrying admission letter to ${to}`);
+          await sendEmail({ to, firstName, selectedCourse });
+          console.log(`Successfully sent admission letter on retry to ${to}`);
+        } catch (retryError) {
+          console.error('Failed to send admission letter even after retry:', retryError);
+        }
+      }, 5 * 60 * 1000); // 5 minutes
     }
   });
+
+  // Store the job reference to prevent garbage collection
+  if (!global.scheduledJobs) {
+    global.scheduledJobs = new Map();
+  }
+  global.scheduledJobs.set(`${to}-${scheduledTime.getTime()}`, job);
+
+  console.log(`Admission letter scheduled for ${to} at ${scheduledTime}`);
 }
 
 // Function for admin notifications using Handlebars

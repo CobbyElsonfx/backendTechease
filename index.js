@@ -17,18 +17,21 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-// Configure CORS for production
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://techeaseafrica.onrender.com']  
-    : 'http://localhost:3000', // Development frontend URL
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+// Apply CORS middleware before other middleware
+app.use(cors());
 
-app.use(cors(corsOptions));
+// Add headers middleware
+app.use((req, res, next) => {
+  // Set headers that LiteSpeed might strip
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Expose-Headers', 'Content-Range, X-Content-Range');
+  next();
+});
 
-// Routes
+// Routesaa
 app.use('/api/admin', adminRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/settings', settingRoutes);
@@ -46,7 +49,7 @@ mongoose.connect(process.env.MONGODB_URI)
     require('./utils/initAdmin')();
   })
   .catch((error) => {
-    console.error('MongoDB connection :', error);
+    console.error('MongoDB connection error:', error);
   });
 
 app.listen(PORT, () => {
