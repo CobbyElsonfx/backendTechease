@@ -39,6 +39,10 @@ const courseSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  startDate: {
+    type: Date,
+    default: null
+  },
   order: {
     type: Number,
     default: 0

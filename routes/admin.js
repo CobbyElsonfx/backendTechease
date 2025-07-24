@@ -14,6 +14,8 @@ router.get('/dashboard-stats', adminController.getDashboardStats);
 // Application management routes
 router.get('/applications', adminController.getApplications);
 router.put('/applications/:id', adminController.updateApplicationStatus);
+router.delete('/applications/:id', adminController.deleteApplication);
+router.post('/company-commission', adminController.addCompanyCommission);
 router.get('/cohorts/upcoming', adminController.getUpcomingCohorts);
 router.put('/applications/:id/cohort', adminController.updateApplicationCohort);
 router.get('/cohorts/stats', adminController.getCohortStats);

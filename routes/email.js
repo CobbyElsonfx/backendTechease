@@ -1,39 +1,41 @@
 const express = require('express');
 const router = express.Router();
-const { sendEmail } = require('../utils/emailService');
+const { sendEmail, sendNewsletterSubscriptionEmail , sendContactEmail} = require('../utils/emailService');
+const NewsletterSubscription = require('../models/NewsletterSubscription');
 
 router.post('/send-email', async (req, res) => {
   try {
-    const { to, name, course } = req.body;
+    const { name, email, subject, message } = req.body;
 
-    if (!to || !name || !course) {
+    if (!name || !email || !subject || !message) {
       return res.status(400).json({
         status: 'error',
-        message: 'Missing required fields'
+        message: 'All fields are required'
       });
     }
 
-    await sendEmail({
-      to,
-      subject: `Welcome to Teachease Africa, ${name}!`,
-      template: 'student-confirmation',
-      data: {
-        name,
-        courseName: course
-      }
+    await sendContactEmail({
+      to: 'techeaseAfrica@gmail.com', // Your business email
+      name,
+      email,
+      subject,
+      message
     });
 
     res.json({
       status: 'success',
       message: 'Email sent successfully'
     });
+
   } catch (error) {
-    console.error('Email sending error:', error);
+    console.error('Error sending email:', error);
     res.status(500).json({
-      status: 'error',
+      status: 'error', 
       message: 'Failed to send email'
     });
   }
+
+
 });
 
 // Newsletter subscription route
@@ -48,9 +50,21 @@ router.post('/subscribe', async (req, res) => {
       });
     }
 
-    // TODO: Add email to your newsletter database/CRM
+    // Check if email already exists in the database
+    const existingSubscription = await NewsletterSubscription.findOne({ email });
+    if (existingSubscription) {
+      return res.status(200).json({
+        status: 'success',
+        message: 'Email already subscribed'
+      });
+    }
+    // If email does not exist, add it to the database
+    const newSubscription = new NewsletterSubscription({ email });
+    await newSubscription.save();
+
+
     // For now, we'll just send a confirmation email
-    await sendEmail({
+    await sendNewsletterSubscriptionEmail({
       to: email,
       subject: 'Welcome to Teachease Africa Newsletter!',
       template: 'newsletter-welcome',

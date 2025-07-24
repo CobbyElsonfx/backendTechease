@@ -6,7 +6,7 @@ const initializeAdmin = async () => {
     // Check if admin exists
     const adminExists = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
     
-    if (!adminExists) {
+    if (!adminExists) {  
       console.log('Creating default admin account...');
       const hashedPassword = await bcrypt.hash('admin123', 10);
       

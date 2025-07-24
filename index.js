@@ -11,6 +11,7 @@ const settingRoutes = require('./routes/settings');
 const emailRoutes = require('./routes/email');
 const applicationRoutes = require('./routes/application');
 const eventRoutes = require('./routes/events');
+const agentRoutes = require('./routes/agent');
 
 const app = express();
 
@@ -28,6 +29,13 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Expose-Headers', 'Content-Range, X-Content-Range');
+  res.setHeader("Content-Security-Policy",
+    "default-src 'self';" +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" +
+    "font-src 'self' https://fonts.gstatic.com;" +
+    "img-src 'self' data: https:;" +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval';"
+  );
   next();
 });
 
@@ -38,6 +46,7 @@ app.use('/api/settings', settingRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/application', applicationRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/agent', agentRoutes);
 
 const PORT = process.env.PORT || 5000;
 

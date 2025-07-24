@@ -3,6 +3,7 @@ const Application = require('../models/Application');
 const Course = require('../models/Course');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Setting = require('../models/Setting');
 
 exports.login = async (req, res) => {
   try {
@@ -199,5 +200,38 @@ exports.getCohortStats = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching cohort statistics' });
+  }
+}; 
+
+exports.deleteApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const application = await Application.findByIdAndDelete(id);
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+    res.json({ message: 'Application deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting application' });
+  }
+};
+
+
+exports.addCompanyCommission = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    if (typeof amount !== 'number' || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid commission amount' });
+    }
+    let settings = await Setting.findOne({});
+    if (!settings) {
+      settings = await Setting.create({ companyCommission: amount });
+    } else {
+      settings.companyCommission = (settings.companyCommission || 0) + amount;
+      await settings.save();
+    }
+    res.json({ message: 'Company commission updated', companyCommission: settings.companyCommission });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating company commission' });
   }
 }; 

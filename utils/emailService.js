@@ -40,12 +40,12 @@ async function sendApplicationAcknowledgment({ to, firstName, selectedCourse }) 
     const mailOptions = {
       from: '"Teachease Africa" <noreply@techease.africa>',
       to,
-      subject: `Thank You for Applying to Techease Africa, ${firstName}!`,
+      subject: `Thank You for Applying to Trainova Africa, ${firstName}!`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #2c3e50;">Thank You for Your Application!</h2>
           <p>Dear ${firstName},</p>
-          <p>Thank you for taking the first step in your tech career journey by applying to our ${selectedCourse} program at Techease Africa.</p>
+          <p>Thank you for taking the first step in your tech career journey by applying to our ${selectedCourse} program at Trainova Africa.</p>
           <p>Our admissions board is currently reviewing your application. This process typically takes less than 30 minutes.</p>
           <p>While you wait, we encourage you to join our community platforms to stay updated:</p>
           <ul style="list-style: none; padding: 0;">
@@ -66,7 +66,7 @@ async function sendApplicationAcknowledgment({ to, firstName, selectedCourse }) 
             </li>
           </ul>
           <p>Please check your email in about 30 minutes for your admission decision and next steps.</p>
-          <p>Best regards,<br>Techease Africa Team</p>
+          <p>Best regards,<br>Trainova Africa Team</p>
         </div>
       `
     };
@@ -82,7 +82,7 @@ async function sendApplicationAcknowledgment({ to, firstName, selectedCourse }) 
 // Function to schedule admission letter
 function scheduleAdmissionLetter({ to, firstName, selectedCourse }) {
   // Schedule the email to be sent 30 minutes from now
-  const scheduledTime = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+  const scheduledTime = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes from now 
   
   // Store the job in a persistent way
   const job = scheduleJob(scheduledTime, async () => {
@@ -179,50 +179,52 @@ async function generatePDF(data) {
     .text('Congratulations on Your Acceptance!', { align: 'center', underline: true })
     .moveDown(1)
     .font('Helvetica')
-    .text(`We are thrilled to welcome you to the ${formattedStartDate} cohort of the ${selectedCourse} program at Techease Africa. You are among a carefully selected group of 20 exceptional individuals chosen through a competitive admissions process. Prepare to embark on a focused, high-impact learning journey designed to equip you with the skills to lead and excel in todays digital world.`)
+    .text(`We are thrilled to welcome you to the June cohort of the ${selectedCourse} program at Trainova Africa. You are among a carefully selected group of 10 exceptional individuals chosen through a competitive admissions process. Prepare to embark on a focused, high-impact learning journey designed to equip you with the skills to lead and excel in todays digital world.`)
     .moveDown(2)
     .font('Helvetica-Bold')
     .text('Program Details:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
     .list([
-      `Start Date: ${formattedStartDate}`,
-      `Duration: ${courseDuration}`,
-      `Schedule: ${sessionFrequency} sessions via Google Meet`,
+      `Start Date: 1st June`,
+      `Duration: 12 weeks`,
+      'Class Schedule:',
+      '   • Tuesdays: 7:00 PM - 8:30 PM (Main Class)',
+      '   • Thursdays: 7:00 PM - 8:00 PM (Student Pair Meetings)',
+      '   • Saturdays: 7:00 PM - 8:30 PM (Main Class)',
+      'Note: Thursday sessions are dedicated pair programming meetings where you will work with your assigned partner on collaborative projects.',
       'Final project submission in week 10',
       '4-week internship/mentorship on real-world projects',
     ])
     .moveDown(1)
     .font('Helvetica-Bold')
-    .text('Registration Requirements:', { align: 'left', underline: true })
+    .text('Program Requirements:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
     .list([
-      'Non-refundable registration fee of GHS 150 (Payment must be completed before program start date)',
       'Personal laptop with stable internet connection',
       'Regular attendance is mandatory for all sessions',
       'Curriculum available for review on our website',
     ])
     .moveDown(1)
     .font('Helvetica-Bold')
+    .text('Important Program Rules:', { align: 'left', underline: true })
+    .moveDown(0.5)
+    .font('Helvetica')
+    .text('This is a professional training program with strict attendance and participation requirements. Your commitment to regular attendance and active participation is crucial for your success. Attendance is strictly monitored and is a key factor in program completion and certification. Missing sessions without prior notice may result in removal from the program.')
+    .moveDown(1)
+    .font('Helvetica-Bold')
     .text('Next Steps:', { align: 'left', underline: true })
     .moveDown(0.5)
     .font('Helvetica')
     .list([
-      'Complete your registration fee payment',
       'Review the curriculum on our website',
       'Prepare your learning environment (laptop and stable internet)',
       'Mark your calendar for the program start date',
     ])
     .moveDown(1)
-    .font('Helvetica-Bold')
-    .text('Important Notes:', { align: 'left', underline: true })
-    .moveDown(0.5)
     .font('Helvetica')
-    .text('Failure to complete payment by the start date will result in forfeiting your spot. You will need to reapply for the next cohort. Attendance is strictly monitored and is a key factor in program completion and certification.')
-    .moveDown(1)
-    .font('Helvetica')
-    .text('Welcome to Techease Africa!', { align: 'left' })
+    .text('Welcome to Trainova Africa!', { align: 'left' })
     .moveDown(1)
     .font('Helvetica')
     .text('Best regards,', { align: 'left' });
@@ -250,8 +252,8 @@ async function sendEmail({ to, firstName, selectedCourse }) {
     const mailOptions = {
       from: '"Teachease Africa" <noreply@techease.africa>',
       to,
-      subject: `Welcome to Techease Africa, ${firstName.trim()}!`,
-      text: `Dear ${firstName.trim()},\n\nWe are excited to have you join Techease Africa. Please find attached your admission letter.\n\nBest regards,\nTechease Africa Team`,
+      subject: `Welcome to Trainova Africa, ${firstName.trim()}!`,
+      text: `Dear ${firstName.trim()},\n\nWe are excited to have you join Trainova Africa. Please find attached your admission letter.\n\nBest regards,\nTrainova Africa Team`,
       attachments: [
         {
           filename: `${firstName.trim()}_congrats.pdf`,
@@ -274,9 +276,62 @@ async function sendEmail({ to, firstName, selectedCourse }) {
   }
 }
 
+async function sendNewsletterSubscriptionEmail({ to}) {
+  try {
+    const mailOptions = {
+      from: '"Teachease Africa" <noreply@techease.africa>',
+      to,
+      subject: `Thank You for Subscribing to Trainova Africa`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2c3e50;">Thank You for Subscribing to Trainova Africa!</h2>
+         
+          <p>Thank you for subscribing to our newsletter. You will receive updates about our upcoming programs, events, and other relevant information.</p>
+          <p>We value your interest and look forward to sharing more about our mission and impact.</p>
+          <p>Best regards,<br>Trainova Africa Team</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    console.error('Newsletter subscription email failed:', error);
+    throw error;
+  }
+}
+
+async function sendContactEmail({ to, name, email, subject, message }) {
+  try {
+    const mailOptions = {
+      to: 'techeaseAfrica@gmail.com', // Fixed destination email for contact form submissions
+      subject: `New message from ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong> ${message}</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    console.error('Contact email failed:', error);
+    throw error;
+  }
+}
+
+
+
 module.exports = { 
   sendEmail,
   sendAdminNotification,
   sendApplicationAcknowledgment,
-  scheduleAdmissionLetter
+  scheduleAdmissionLetter,
+  sendNewsletterSubscriptionEmail,
+  sendContactEmail
 }; 

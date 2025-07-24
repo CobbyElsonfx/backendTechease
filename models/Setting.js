@@ -36,6 +36,10 @@ const SettingSchema = new mongoose.Schema({
   portalClosedMessage: {
     type: String,
     default: "Applications are currently closed. Please check back later.",
+  },
+  companyCommission: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true,

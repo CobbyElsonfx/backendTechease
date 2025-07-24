@@ -44,7 +44,9 @@ exports.createCourse = async (req, res) => {
       schedule, 
       image, 
       order,
-      curriculum 
+      curriculum,
+      isActive,
+      startDate
     } = req.body;
 
     // Validate curriculum data
@@ -66,7 +68,9 @@ exports.createCourse = async (req, res) => {
       schedule,
       image,
       order,
-      curriculum: curriculum || []
+      curriculum: curriculum || [],
+      isActive,
+      startDate
     });
 
     await course.save();
@@ -84,9 +88,14 @@ exports.createCourse = async (req, res) => {
 exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
+    const updateData = { ...req.body };
+    // Ensure startDate is a Date if provided as string
+    if (updateData.startDate) {
+      updateData.startDate = new Date(updateData.startDate);
+    }
     const course = await Course.findByIdAndUpdate(
       id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
     

@@ -45,6 +45,11 @@ const applicationSchema = new mongoose.Schema({
   lastModified: {
     type: Date,
     default: Date.now
+  },
+  agent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Agent',
+    required: false
   }
 }, {
   timestamps: true // This will add createdAt and updatedAt fields automatically
