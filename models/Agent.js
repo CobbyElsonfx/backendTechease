@@ -34,6 +34,10 @@ const agentSchema = new mongoose.Schema({
   commissionPaid: {
     type: Boolean,
     default: false
+  },
+  paidCommission: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

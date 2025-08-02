@@ -21,14 +21,52 @@ const applicationSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
+  whatsappNumber: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  country: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  educationLevel: {
+    type: String,
+    required: true,
+    trim: true
+  },
   selectedCourse: {
     type: String,
     required: true
   },
   status: {
     type: String,
-    enum: ['pending', 'accepted', 'rejected'],
+    enum: ['pending', 'approved', 'rejected'],
     default: 'pending'
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['paid', 'unpaid'],
+    default: 'unpaid'
+  },
+  isStudent: {
+    type: Boolean,
+    default: false
+  },
+  studentIdCard: {
+    type: String, // File path/URL
+    required: function() { return this.isStudent; }
+  },
+  scholarshipReason: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  applicationRef: {
+    type: String,
+    required: true,
+    unique: true
   },
   cohortStartDate: {
     type: Date,
@@ -45,6 +83,19 @@ const applicationSchema = new mongoose.Schema({
   lastModified: {
     type: Date,
     default: Date.now
+  },
+  reviewedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin',
+    required: false
+  },
+  reviewedAt: {
+    type: Date,
+    required: false
+  },
+  reviewNotes: {
+    type: String,
+    trim: true
   },
   agent: {
     type: mongoose.Schema.Types.ObjectId,

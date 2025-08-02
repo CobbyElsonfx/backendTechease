@@ -15,7 +15,7 @@ router.post('/send-email', async (req, res) => {
     }
 
     await sendContactEmail({
-      to: 'techeaseAfrica@gmail.com', // Your business email
+      to: 'trainova@gmail.com', // Your business email
       name,
       email,
       subject,
