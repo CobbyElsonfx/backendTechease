@@ -272,6 +272,55 @@ const applicationController = {
     }
   },
 
+  // New method to update payment status
+  updatePaymentStatus: async (req, res) => {
+    try {
+      const { applicationId, paymentStatus } = req.body;
+      const adminId = req.user.id; // Assuming admin is authenticated
+
+      if (!applicationId) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Application ID is required'
+        });
+      }
+
+      if (!['paid', 'unpaid'].includes(paymentStatus)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid payment status. Must be either "paid" or "unpaid"'
+        });
+      }
+
+      const application = await Application.findById(applicationId);
+      if (!application) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Application not found'
+        });
+      }
+
+      // Update payment status
+      application.paymentStatus = paymentStatus;
+      application.lastModified = new Date();
+
+      await application.save();
+
+      res.json({
+        status: 'success',
+        message: `Payment status updated to ${paymentStatus} successfully`,
+        application
+      });
+
+    } catch (error) {
+      console.error('Payment status update error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to update payment status'
+      });
+    }
+  },
+
   // Get all applications for admin review
   getAllApplications: async (req, res) => {
     try {
